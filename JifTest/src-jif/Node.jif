@@ -5,20 +5,45 @@ package exercise;
 // Only Alice and Bob are allowed to access the integers stored in the list
 // Alice, Bob and Chuck are allowed to know how many elements are in the list
 // Write the annotations (labels) for fields and methods.
-public class  Node  {
-	public int value;
-	public Node  next;
 
-	public Node(int value) {
+public class Node  {
+	public int {* -> Alice, Bob}value = 0;
+	public Node {* -> Alice, Bob, Chuck}next = null;
+
+	public Node(int {* -> Alice, Bob}value) {
+		this.value = value;
+		this.next = null;
 	}
 
-	public void add(int  value)  {
+	public void add {* -> Alice, Bob, Chuck}(int {* -> Alice, Bob}value)  {
+		this.next = new Node(value);
 	}
 
-	public int length() {
+	public int {* -> Alice, Bob, Chuck}length() {
+		Node current = this;
+		int length = 0;
+		while (current != null) {
+			length++;
+			current = current.next;
+		}
+		return length;
 	}
 
-	// Throws exception for  negative parameters
-	public int get(int i) throws Exception {
+	// Throws exception for negative parameters
+	public int get {* -> Alice, Bob}(int {* -> Alice, Bob}i) : {* -> Alice, Bob} throws Exception {
+		if (i < 0) throw new Exception("Negative values are not defined");
+		Node current = this;
+		int value = 0;
+		for (int j = 0; j <= i; j++) {
+			if(current == null){
+				throw new Exception("Out of Bounds");
+			} else if(j == i) {
+				value = current.value;
+				break;
+			} else {
+				current = current.next;
+			}
+		}
+		return value;
 	}
 }
