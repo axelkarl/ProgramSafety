@@ -25,7 +25,7 @@ public class Node2 authority(Alice&Bob&Chuck) {
 		this.next = new Node2(value);
 	}
 
-	public int {_->Alice&Bob&Chuck}length() {
+	public int {_->Alice, Bob, Chuck}length() {
 		Node2 current = this;
 		int length = 0;
 		while (current != null) {
