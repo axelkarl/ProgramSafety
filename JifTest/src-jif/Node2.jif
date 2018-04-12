@@ -12,20 +12,20 @@ package exercise;
 	public {RETURN-LABEL}foo{CALL-LABEL}({ARGUMENT-LABEL}int x) : {EXCEPTION-LABEL} throws Exception {}
 */
 
-public class Node2 {
-	public int {* -> Alice, Bob}value;
-	public Node2 {* -> Alice, Bob, Chuck}next;
+public class Node2 authority(Alice&Bob&Chuck) {
+	public int {_->Alice&Bob&Chuck}value;
+	public Node2 {_->Alice&Bob&Chuck}next;
 
-	public Node2(int {* -> Alice, Bob}value) {
+	public Node2(int {_->Alice&Bob&Chuck}value) {
 		this.value = value;
 		this.next = null;
 	}
 
-	public void add {* -> Alice, Bob, Chuck}(int {* -> Alice, Bob}value)  {
+	public void add {_->Alice&Bob&Chuck}(int {_->Alice&Bob&Chuck}value) {
 		this.next = new Node2(value);
 	}
 
-	public int {* -> Alice, Bob, Chuck}length() {
+	public int {_->Alice&Bob&Chuck}length() {
 		Node2 current = this;
 		int length = 0;
 		while (current != null) {
@@ -35,7 +35,7 @@ public class Node2 {
 		return length;
 	}
 
-	public int get {* -> Alice, Bob}(int {* -> Alice, Bob}i) : {* -> Alice, Bob} throws Exception {
+	public int get {_->Alice&Bob&Chuck}(int {_->Alice&Bob&Chuck}i) : {_->Alice&Bob&Chuck} throws Exception {
 		if (i < 0) throw new Exception("Negative values are not defined");
 		Node2 current = this;
 		int value = 0;
@@ -52,7 +52,7 @@ public class Node2 {
 		return value;
 	}
 
-	public int {*->Alice&Bob&Chuck}mean {* -> Alice, Bob, Chuck}() {
+	public int {_->Alice&Bob&Chuck} mean {_->Alice&Bob&Chuck}() {
 		try {
 			Node2 current = this;
 			int total = 0, count = 0;
@@ -61,20 +61,18 @@ public class Node2 {
 				total += current.value;
 				current = current.next;
 			}
-			// context: Alice&Bob&Chuck
 			return total / count;
 		} catch (ArithmeticException e) {
 			return 0;
-		} 
+		}
 	}
 
-	public int {Alice->Chuck;Bob->Chuck; Chuck->Chuck} discloseMeanToChuck(){
-		int mean = mean();
-		return mean;
+	//{Alice->Chuck;Bob->Chuck; Chuck->Chuck}
+	public int {Alice->Chuck;Bob->Chuck; Chuck->Chuck} discloseMeanToChuck{_->Alice&Bob&Chuck} () where authority(Alice&Bob&Chuck) {
+		return declassify(mean(), {Alice->Chuck;Bob->Chuck; Chuck->Chuck});
 	}
 
-	public int {Chuck->Chuck} transferMeanToChuck()  {
-		int mean = discloseMeanToChuck();
-		return mean;
+	public int {Chuck->Chuck} transferMeanToChuck {_->Alice&Bob&Chuck} () where authority(Alice&Bob&Chuck) {
+		return declassify(mean(),{Chuck->Chuck});
 	}
 }
