@@ -1,0 +1,112 @@
+package project;
+
+public class DatingApp01 authority (Alice, Bob, Chuck) {
+	private double {Alice->Alice} alicePositionX;
+	private double {Alice->Alice} alicePositionY;
+	private String {Alice->Alice} alicePhone;
+	
+	private double {Bob->Bob} bobPositionX;
+	private double {Bob->Bob} bobPositionY;
+	private String {Bob->Bob} bobPhone;
+	
+	private double {Chuck->Chuck} chuckPositionX;
+	private double {Chuck->Chuck} chuckPositionY;
+	private String {Chuck->Chuck} chuckPhone;
+
+	private NodeAlice aliceLikes;
+	private NodeBob bobLikes;
+	private NodeChuck chuckLikes;
+	
+	public void updateAlice{Alice->Alice}(double {Alice->Alice}x, double {Alice->Alice}y, String {Alice->Alice}Phone) {
+		this.alicePositionX = x;
+		this.alicePositionY = y;
+		this.alicePhone = Phone;
+	}
+	public void updateBob{Bob->Bob}(double {Bob->Bob} x, double {Bob->Bob} y, String {Bob->Bob} Phone) {
+		this.bobPositionX = x;
+		this.bobPositionY = y;
+		this.bobPhone = Phone;
+	}
+	public void updateChuck{Chuck->Chuck}(double {Chuck->Chuck} x, double {Chuck->Chuck} y, String {Chuck->Chuck} Phone) {
+		this.chuckPositionX =x ;
+		this.chuckPositionY = y;
+		this.chuckPhone = Phone;
+	}
+
+	private double distance(double x1, double y1, double x2, double y2) {
+		return (x2 - x1)*(x2 - x1)+(y2 - y1)*(y2 - y1);
+	}
+	
+	public NodeAlice {Alice->Alice} findAliceNeighbours {Alice->Alice}() where Alice actsfor Bob, Alice actsfor Chuck {
+		NodeAlice neighbours = null;
+		int bobDistance = (int)distance(this.alicePositionX, this.alicePositionY, this.bobPositionX, this.bobPositionY);
+		int chuckDistance = (int)distance(this.alicePositionX, this.alicePositionY, this.chuckPositionX, this.chuckPositionY);
+		int threshold = 10 * 10; // maximum allowable distance
+		
+		if(bobDistance > threshold && chuckDistance > threshold) {
+			neighbours = new NodeAlice(Bob, bobDistance);
+			neighbours.add(new NodeAlice(Chuck, chuckDistance));
+		} else if(bobDistance > threshold){
+			neighbours = new NodeAlice(Bob, bobDistance);
+		} else if(chuckDistance > threshold) {
+			neighbours = new NodeAlice(Chuck, chuckDistance);
+		}
+		return neighbours;
+	}
+	
+	
+	public void addAliceLike{Alice->Alice}(principal {Alice->Alice}user) where Alice actsfor Bob, Alice actsfor Chuck {
+		try{
+			
+			NodeAlice neighbours = findAliceNeighbours();
+			NodeAlice current = neighbours;
+			
+			while(current != null){
+				if(current.user==user){
+					aliceLikes.add(new NodeAlice(user, current.distance));
+					break;
+				}
+				current = current.next;
+			}
+		} catch(Exception e){
+			//Do nothing
+		}
+	}
+	
+	private boolean {Alice->Alice} isAliceInBobLikes() : {Alice->Alice} where authority(Bob) {
+		NodeBob current = bobLikes;
+		
+		while(current != null){
+			if(current.user == Alice) {
+				return true;
+			}
+			current=current.next;
+		}
+		return false;
+	}
+	
+	public boolean {Alice->Alice} isAliceInChuckLikes() : {Alice->Alice} where authority(Chuck) {
+		NodeChuck current = this.chuckLikes;
+		
+		while(current != null){
+			if(current.user == Alice) {
+				return true;
+			}
+			current=current.next;
+		}
+		return false;
+	}
+
+	public String{Alice->Alice} discloseNumberToAlice{Alice->Alice}(principal {Alice->Alice}user) where Alice actsfor Bob, Alice actsfor Chuck {
+		String {Alice->Alice} phone = "";
+		
+		if (user == Bob) {	
+			phone = this.bobPhone;
+		}
+		
+		if (user == Chuck) {
+			phone = this.chuckPhone;
+		}
+		return phone;
+	}
+}
