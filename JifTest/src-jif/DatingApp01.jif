@@ -22,11 +22,13 @@ public class DatingApp01 authority (Alice, Bob, Chuck) {
 		this.alicePositionY = y;
 		this.alicePhone = Phone;
 	}
+
 	public void updateBob{Bob->Bob}(double {Bob->Bob} x, double {Bob->Bob} y, String {Bob->Bob} Phone) {
 		this.bobPositionX = x;
 		this.bobPositionY = y;
 		this.bobPhone = Phone;
 	}
+
 	public void updateChuck{Chuck->Chuck}(double {Chuck->Chuck} x, double {Chuck->Chuck} y, String {Chuck->Chuck} Phone) {
 		this.chuckPositionX =x ;
 		this.chuckPositionY = y;
@@ -74,7 +76,7 @@ public class DatingApp01 authority (Alice, Bob, Chuck) {
 	}
 	
 	private boolean {Alice->Alice} isAliceInBobLikes() : {Alice->Alice} where authority(Bob) {
-		NodeBob current = bobLikes;
+		NodeBob current = this.bobLikes;
 		
 		while(current != null){
 			if(current.user == Alice) {
