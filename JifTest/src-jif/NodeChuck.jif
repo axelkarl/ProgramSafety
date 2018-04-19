@@ -1,27 +1,27 @@
 package project;
 
 public class  NodeChuck  {
-	public principal {Chuck->Chuck} user; 
-	public int {Chuck->Chuck} distance;
-	public NodeChuck {Chuck->Chuck} next;
+    public principal {Chuck->Chuck} user;
+    public double {Chuck->Chuck} distance;
+    public NodeChuck {Chuck->Chuck} next;
 
-	public NodeChuck(principal {Chuck->Chuck} user, int {Chuck->Chuck} distance) {
-		this.user = user;
-    	this.distance = distance;
-    	this.next = null;
-	}
+    public NodeChuck(principal {Chuck->Chuck} user, double {Chuck->Chuck} distance) {
+        this.user = user;
+        this.distance = distance;
+        this.next = null;
+    }
 
-	public void add{Chuck->Chuck}(NodeChuck {Chuck->Chuck}node)  {
-		this.next = node;
-	}
-	
-	// If a is null, returns b, otherwise appends b to a and returns a
-	public static NodeChuck {Chuck->Chuck} append{Chuck->Chuck}(NodeChuck {Chuck->Chuck}a, NodeChuck {Chuck->Chuck}b) {
-		if(a == null){
-			return b;
-		} else {
-			a.add(b);
-			return a;
-		}
-	}
+    public void add{Chuck->Chuck}(NodeChuck {Chuck->Chuck}node)  {
+        this.next = node;
+    }
+
+    // If a is null, returns b, otherwise appends b to a and returns a
+    public static NodeChuck {Chuck->Chuck} append{Chuck->Chuck}(NodeChuck {Chuck->Chuck}a, NodeChuck {Chuck->Chuck}b) {
+        if(a == null){
+            return b;
+        } else {
+            a.add(b);
+            return a;
+        }
+    }
 }
