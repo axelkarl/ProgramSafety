@@ -1,0 +1,36 @@
+MODULE main
+VAR
+  choice:  boolean;
+  payment: boolean;
+  acc_payment: boolean;
+  n_items: 0..15;
+  state:   { ready, expect_payment, dispense_item };
+
+ASSIGN
+  init (state) := ready;
+  next (state) := case
+		    state = ready          & choice:  expect_payment;
+		    state = expect_payment & acc_payment: dispense_item;
+		    state = expect_payment & !payment & choice: expect_payment;
+		    state = expect_payment & !(payment & n_items>0) & !choice: ready;
+		    state = dispense_item:	      ready;
+		    TRUE:                             state;
+  esac;
+
+  init (n_items) := 10;
+  next (n_items) :=	(n_items > 0) & (state = dispense_item)? n_items - 1 : n_items;
+
+  init (acc_payment) := FALSE;
+  next (acc_payment) := (state = expect_payment & payment & n_items>0);
+
+DEFINE
+  release_item := (state = dispense_item);
+
+LTLSPEC
+  G(acc_payment -> F release_item);
+CTLSPEC
+  AG(n_items >= 0);
+--LTLSPEC
+--  G(n_items = 0 -> F acc_payment);
+--LTLSPEC
+--  G(acc_payment -> n_items - 1);

@@ -63,7 +63,7 @@ public class DatingApp01 authority (Alice, Bob, Chuck) {
                 return;
             }
             neighbours = neighbours.next;
-        }
+			}
     }
 
     private boolean {Alice->Alice} isAliceInBobLikes{Alice->Alice}() where authority(Bob) {

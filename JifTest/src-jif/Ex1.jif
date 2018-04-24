@@ -7,7 +7,7 @@ public class Ex1 {
 	// Bob has 800 SEK
 	public static void main(String [] args) {
 		int {* -> Alice,Chuck} aliceAccount = 1000;
-		int {*->Bob, Chuck}bobAccount = 800;
+		int {* -> Bob, Chuck} bobAccount = 800;
 		int sharedCost = 100;
 
 		int {* -> Alice&Bob&Chuck} totalTransaction = 0;
