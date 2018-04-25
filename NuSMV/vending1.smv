@@ -1,36 +1,69 @@
 MODULE main
 VAR
-  choice:  boolean;
-  payment: boolean;
-  acc_payment: boolean;
-  n_items: 0..15;
-  state:   { ready, expect_payment, dispense_item };
+    -- The user has choosen an item
+    choice:         boolean;
+    -- The user has started to give the machine money
+    payment:        boolean;
+    -- The machine has accepted the amount of money given
+    acc_payment:    boolean;
+    -- The number of items present in the machine
+    n_items:        0..5;
+    -- The states in the FSM
+    state:          {ready, expect_payment, dispense_item};
+
+/--
+    ready: Ready state (initial state)
+    expect_payment: The machine is waiting for money
+    dispense_item: The machine dispensed an item
+--/
 
 ASSIGN
-  init (state) := ready;
-  next (state) := case
-		    state = ready          & choice:  expect_payment;
-		    state = expect_payment & acc_payment: dispense_item;
-		    state = expect_payment & !payment & choice: expect_payment;
-		    state = expect_payment & !(payment & n_items>0) & !choice: ready;
-		    state = dispense_item:	      ready;
-		    TRUE:                             state;
-  esac;
+    init (state) := ready; -- Initial state of the machine
+    next (state) := case
+        state = ready          & choice:                expect_payment;
+        state = expect_payment & acc_payment:           dispense_item;
+        /--
+            If the user has payed but the then choosed to abort the transaction
+            the machine should NOT go back to ready state
+        --/
+        state = expect_payment & !choice & !payment:    ready;
+        state = dispense_item:                          ready;
+        TRUE:                                           state;
+    esac;
 
-  init (n_items) := 10;
-  next (n_items) :=	(n_items > 0) & (state = dispense_item)? n_items - 1 : n_items;
+    -- Initial state
+    init (acc_payment) := FALSE;
+    /-- The machine can't accept an purchase if the user hasn't given
+        enough money or there are no item left in the machine
+    --/
+    next (acc_payment) := (state = expect_payment & payment & n_items > 0);
 
-  init (acc_payment) := FALSE;
-  next (acc_payment) := (state = expect_payment & payment & n_items>0);
+    /--
+        When the user buys an item the number of items will be
+        decreased by one.
+    --/
+    next(n_items) := case
+        state = dispense_item & n_items > 0:    n_items - 1;
+        TRUE:                                   n_items;
+    esac;
 
 DEFINE
-  release_item := (state = dispense_item);
+    release_item := (state = dispense_item);
 
 LTLSPEC
-  G(acc_payment -> F release_item);
-CTLSPEC
-  AG(n_items >= 0);
---LTLSPEC
---  G(n_items = 0 -> F acc_payment);
---LTLSPEC
---  G(acc_payment -> n_items - 1);
+    /--
+        If the machine accepted the transaction, the machine
+        will always dispense an item.
+    --/
+    G(acc_payment -> F release_item);
+
+LTLSPEC
+    -- Number of items should always be >= 0
+    G(n_items >= 0);
+
+LTLSPEC
+    /--
+        When the machine dispenses an item, the total number of items left will
+        be decreased by one.
+    --/
+    G(state = dispense_item -> next(n_items) = n_items - 1);

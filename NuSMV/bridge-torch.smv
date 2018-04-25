@@ -1,0 +1,150 @@
+MODULE main
+VAR
+    location :      array 0..3 of boolean;
+    traveling:      array 0..3 of boolean;
+    torch:          boolean;
+    time:           0..100;
+
+ASSIGN
+    /--
+        The initial states
+    --/
+    init (location[0]) := FALSE;
+    init (location[1]) := FALSE;
+    init (location[2]) := FALSE;
+    init (location[3]) := FALSE;
+    init (torch) := FALSE;
+    init (time) := 0;
+
+    next (torch) := case
+        -- rule: torch can only move if carried
+        (
+            traveling[0] & location[0] = torch
+        |   traveling[1] & location[1] = torch
+        |   traveling[2] & location[2] = torch
+        |   traveling[3] & location[3] = torch
+        ) :                                     !torch;
+        TRUE:                                   torch;
+    esac;
+
+    next (location[0]) := case
+        -- rule: location changes if "0" is traveling
+        traveling[0] & torch = location[0] :    !location[0];
+        TRUE:                                   location[0];
+    esac;
+
+    next (location[1]) := case
+        -- rule: location changes if "1" is traveling
+        traveling[1] & torch = location[1] :    !location[1];
+        TRUE:                                   location[1];
+    esac;
+
+    next (location[2]) := case
+        -- rule: location changes if "2" is traveling
+        traveling[2] & torch = location[2] :    !location[2];
+        TRUE:                                   location[2];
+    esac;
+
+    next (location[3]) := case
+        -- rule: location changes if "3" is traveling
+        traveling[3] & torch = location[3] :    !location[3];
+        TRUE:                                   location[3];
+    esac;
+
+    next(time) := case
+        time > 90:                              90;
+        -- According to specification (see lecture slide)
+        traveling[3]:                           time + 10;
+        traveling[2]:                           time + 5;
+        traveling[1]:                           time + 2;
+        traveling[0]:                           time + 1;
+        -- Combine the travelers (2 people can cross together using one torch)
+        traveling[0] & traveling[3]:            time + 10;
+        traveling[1] & traveling[3]:            time + 10;
+        traveling[2] & traveling[3]:            time + 10;
+        traveling[0] & traveling[2]:            time + 5;
+        traveling[1] & traveling[2]:            time + 5;
+        traveling[0] & traveling[1]:            time + 2;
+        TRUE:                                   time;
+    esac;
+
+LTLSPEC
+    /--
+        Show counterexample on why it's not possible to reach the goal
+        within 17 time units, I.E show us the optimal solution to this
+        problem.
+    --/
+    !((count(traveling[0], traveling[1], traveling[2], traveling[3]) <= 2)
+        U (location[0] & location[1] & location[2] & location[3] & time <= 17));
+
+LTLSPEC
+    /--
+        All people will eventually reach the same side, which implies
+        that they got the torch as well.
+    --/
+    G(location[0] & location[1] & location[2] & location[3] -> torch);
+
+-- OPTIMAL SOLUTION
+
+--| left side     | right side    | t     |
+--| ------------- |:-------------:| -----:|
+--| a b c d       |               | 0     |
+--| c d           | a b           | 2     |
+--| b c d         | a             | 4     |
+--| b             | a c d         | 14    |
+--| a b           | c d           | 15    |
+--|               | a b c d       | 17    |
+
+-- ERROR OUTPUT
+--Trace Description: LTL Counterexample 
+--Trace Type: Counterexample 
+--  -> State: 1.1 <-
+--    location[0] = FALSE
+--    location[1] = FALSE
+--    location[2] = FALSE
+--    location[3] = FALSE
+--    traveling[0] = TRUE
+--    traveling[1] = TRUE
+--    traveling[2] = FALSE
+--    traveling[3] = FALSE
+--    torch = FALSE
+--    time = 0
+--  -> State: 1.2 <-
+--    location[0] = TRUE
+--    location[1] = TRUE
+--    traveling[0] = FALSE
+--    torch = TRUE
+--    time = 2
+--  -> State: 1.3 <-
+--    location[1] = FALSE
+--    traveling[1] = FALSE
+--    traveling[2] = TRUE
+--    traveling[3] = TRUE
+--    torch = FALSE
+--    time = 4
+--  -> State: 1.4 <-
+--    location[2] = TRUE
+--    location[3] = TRUE
+--    traveling[0] = TRUE
+--    traveling[2] = FALSE
+--    traveling[3] = FALSE
+--    torch = TRUE
+--    time = 14
+--  -> State: 1.5 <-
+--    location[0] = FALSE
+--    traveling[1] = TRUE
+--    torch = FALSE
+--    time = 15
+--  -> State: 1.6 <-
+--    location[0] = TRUE
+--    location[1] = TRUE
+--    traveling[1] = FALSE
+--    torch = TRUE
+--    time = 17
+--  -- Loop starts here
+--  -> State: 1.7 <-
+--    location[0] = FALSE
+--    traveling[0] = FALSE
+--    torch = FALSE
+--    time = 18
+--  -> State: 1.8 <-
