@@ -253,7 +253,8 @@ MODULE main
 
     -- REQ: The cabin can move only when the door is closed.
     SPEC
-        AG(door.status = closed) -> AX(ctrl.direction = up | ctrl.direction = down);
+        --AG(door.status = closed) -> AX(ctrl.direction = up | ctrl.direction = down);
+        AG(door.status = open) -> AG(ctrl.direction = stop);
 
     -- REQ: If no button is pressed, the controller must issue no commands
     -- and the cabin must be stopped.
