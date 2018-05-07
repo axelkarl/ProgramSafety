@@ -1,0 +1,7 @@
+target=DaytimeClient
+
+classpath=.
+sourcepath=.
+
+extensions=${jpf-core}
+report.console.property_violation=result,error,trace,snapshot

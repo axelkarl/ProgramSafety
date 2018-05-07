@@ -1,0 +1,11 @@
+target=DiningPhil
+
+classpath=.
+sourcepath=.
+
+listener=gov.nasa.jpf.listener.PreciseRaceDetector
+cg.threads.break_arrays=true
+extensions=${jpf-core}
+
+report.console.property_violation=result,error,trace,snapshot
+vm.reuse_tid=false
