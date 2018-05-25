@@ -122,17 +122,17 @@ public class Downloader extends Thread {
     }
 
     public void launchDL(int length) {
-        if (downloaders > length) {
-            downloaders = length;
-        }
-        int end = length;
-        int chunkSize = length / (downloaders + 1);
-        int start = 0;
-
         synchronized(output) {
-            // This is a global variable, protect
+            // downloaders is a global variable, protect
             // it so that only one thread at a
             // time can access this variable
+            if (downloaders > length) {
+                downloaders = length;
+            }
+            int end = length;
+            int chunkSize = length / (downloaders + 1);
+            int start = 0;
+
             for (int i = 0; i < downloaders; i++) {
                 start = end - chunkSize;
                 new Downloader(start, end).start();
